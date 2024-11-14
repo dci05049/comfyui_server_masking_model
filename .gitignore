@@ -1,0 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.venv/
+env/
+ENV/
+
+# FastAPI and Python specific cache and log files
+*.log
+*.sqlite3
+*.db
+
+# pip files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment variables
+.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# macOS system files
+.DS_Store
+
+# VS Code settings
+.vscode/
+
+# Python package files
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Temporary files and IDE specific files
+*.bak
+*.swp
+.idea/
+
+# Pytest cache
+.pytest_cache/
+
+# Mypy cache
+.mypy_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Pyright type checker cache
+.pyright/
+
+# Cache files for FastAPI, static files, and Uvicorn logs (if any)
+staticfiles/
+uvicorn.log
