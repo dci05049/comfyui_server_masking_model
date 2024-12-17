@@ -21,7 +21,7 @@
             const inputValue = document.getElementById('user-input').value;
 
             // Fetch the image with the input as a query parameter
-            fetch(`http://127.0.0.1:8000/get-image?input=${encodeURIComponent(inputValue)}`)
+            fetch(`http://127.0.0.1:8000/get_cloth_with_prompt?input=${encodeURIComponent(inputValue)}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Image not found');
                     return response.blob();
