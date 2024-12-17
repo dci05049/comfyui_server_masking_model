@@ -9,7 +9,7 @@ save_image_websocket = 'SaveImageWebsocket'
 server_address = "127.0.0.1:8188"
 client_id = str(uuid.uuid4())
 
-
+# uses the flux-redux-cloth-swap workflow to inpaint image uploaded (changed to base 64) to target image (either model or shirt)
 def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, mask_image_base64):
     TARGETIMAGEID = "410"
     INPAINTIMAGEID = "412"
@@ -30,29 +30,9 @@ def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, 
         prompt_json[INPAINTIMAGEID]["inputs"]["image"] = inpaint_image_base64
         prompt_json[MASKIMAGEID]["inputs"]["mask"] = mask_image_base64
         return prompt_json
-    
-def get_cloth_with_logo_image_json(cloth_base_64, logo_image_base64, mask_base_64):
-    CLOTHIMAGEID = "410"
-    MODELIMAGEID = "412"
-    MASKIMAGEID = "393"
 
-    file_path = "data.json"
 
-    workflow_folder = "workflows-api"
-    file_name = "flux-redux-cloth-swap.json"
-
-    # Construct the full path to the JSON file
-    file_path = os.path.join(workflow_folder, file_name)
-
-    # Open the JSON file and load its content into a variable
-    with open(file_path, "r") as file:
-        prompt_json = json.load(file)
-        prompt_json[CLOTHIMAGEID]["inputs"]["image"] = logo_image_base64
-        prompt_json[MODELIMAGEID]["inputs"]["image"] = cloth_base_64
-        prompt_json[MASKIMAGEID]["inputs"]["mask"] = mask_base_64
-        return prompt_json
-    
-
+# uses the flux-guff-text-api.json workflow to generate image with prompt
 def get_cloth_with_prompt(prompt):
     TEXTID = "6"
 
