@@ -1,4 +1,4 @@
-import websocket 
+import websocket
 import uuid
 import json
 import os
@@ -11,8 +11,8 @@ client_id = str(uuid.uuid4())
 
 # uses the flux-redux-cloth-swap workflow to inpaint image uploaded (changed to base 64) to target image (either model or shirt)
 def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, mask_image_base64):
-    TARGETIMAGEID = "410"
-    INPAINTIMAGEID = "412"
+    TARGETIMAGEID = "412"
+    INPAINTIMAGEID = "410"
     MASKIMAGEID = "393"
 
     file_path = "data.json"
@@ -22,9 +22,10 @@ def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, 
 
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
+    print(f"file path: {file_path}")
 
     # Open the JSON file and load its content into a variable
-    with open(file_path, "r") as file:
+    with open(file_path, "r", encoding="utf8") as file:
         prompt_json = json.load(file)
         prompt_json[TARGETIMAGEID]["inputs"]["image"] = target_image_base64
         prompt_json[INPAINTIMAGEID]["inputs"]["image"] = inpaint_image_base64
