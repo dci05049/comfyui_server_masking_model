@@ -49,43 +49,8 @@ async def get_image(input: str = Query(None)):
     return StreamingResponse(image_stream, media_type="image/png")
 
 
-@app.post("/get_model_with_image/")
-async def get_model_with_image(
-    mask_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
-    person_image: UploadFile = File(..., description="Person image (JPG or PNG)"),
-    clothing_image: UploadFile = File(..., description="Clothing image (JPG or PNG)"),
-):
-    """
-    Endpoint to process three images and return modified images as raw data.
-    """
-    # Load images into memory
-    mask_base64 = await convert_image_to_base64(mask_image)
-    person_base64 = await convert_image_to_base64(person_image)
-    cloth_base64 = await convert_image_to_base64(clothing_image)
-
-    result_image = comfyuiservice.swap_clothes_on_model(cloth_base64, person_base64, mask_base64)
-    image_stream = io.BytesIO(result_image)
-    return StreamingResponse(image_stream, media_type="image/png")
-
-@app.post("/get_model_with_prompt/")
-async def get_model_with_prompt(
-   input: str = Query(None)
-):
-    """
-    Endpoint to process three images and return modified images as raw data.
-    """
-    # Load images into memory
-    """
-    Endpoint to process three images and return modified images as raw data.
-    """
-    # Load images into memory
-    image = comfyuiservice.fetch_image_from_comfy(input)
-    image_stream = io.BytesIO(image)
-    return StreamingResponse(image_stream, media_type="image/png")
-
-
-@app.get("/get_cloth_with_prompt/")
-async def get_cloth_with_prompt(
+@app.get("/image-prompt/")
+async def get_image_with_prompt(
     input: str = Query(None)
 ):
     """
@@ -96,21 +61,21 @@ async def get_cloth_with_prompt(
     image_stream = io.BytesIO(image)
     return StreamingResponse(image_stream, media_type="image/png")
 
-@app.post("/get_cloth_with_logo/")
-async def get_cloth_with_logo(
+@app.post("/target-logo")
+async def get_target_image_with_logo(
     mask_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
-    clothing_image: UploadFile = File(..., description="Cloth image (JPG or PNG)"),
-    logo_image: UploadFile = File(..., description="Logo image (JPG or PNG)"),
+    logo_image: UploadFile = File(..., description="Cloth image (JPG or PNG)"),
+    target_image: UploadFile = File(..., description="Logo image (JPG or PNG)"),
 ):
     """
     Endpoint to process three images and return modified images as raw data.
     """
     # Load images into memory
-    mask_base64 = await convert_image_to_base64(mask_image)
-    logo_base64 = await convert_image_to_base64(logo_image)
-    cloth_base64 = await convert_image_to_base64(clothing_image)
+    mask_image_base64 = await convert_image_to_base64(mask_image)
+    target_image_base64 = await convert_image_to_base64(target_image)
+    logo_image_base64 = await convert_image_to_base64(logo_image)
 
-    result_image = comfyuiservice.get_cloth_with_logo(cloth_base64=cloth_base64, logo_image_base64=logo_base64, mask_image_base64=mask_base64)
+    result_image = comfyuiservice.get_target_image_with_logo(target_image_base64=target_image_base64, logo_image_base64=logo_image_base64, mask_image_base64=mask_image_base64)
     image_stream = io.BytesIO(result_image)
     return StreamingResponse(image_stream, media_type="image/png")
 

@@ -11,13 +11,13 @@
     <!-- Form for uploading files -->
     <form id="upload-form">
         <label for="mask-image">Mask Image (JPG/PNG):</label>
-        <input type="file" id="mask-image" name="mask_image" accept="image/jpeg, image/png" required><br><br>
+        <input type="file" id="mask_image" name="mask_image" accept="image/jpeg, image/png" required><br><br>
         
-        <label for="person-image">target image (JPG/PNG):</label>
-        <input type="file" id="person-image" name="person_image" accept="image/jpeg, image/png" required><br><br>
+        <label for="target_image">target image (JPG/PNG):</label>
+        <input type="file" id="target_image" name="target_image" accept="image/jpeg, image/png" required><br><br>
         
-        <label for="clothing-image">inpainting image (JPG/PNG):</label>
-        <input type="file" id="clothing-image" name="clothing_image" accept="image/jpeg, image/png" required><br><br>
+        <label for="logo_image">logo image (JPG/PNG):</label>
+        <input type="file" id="logo_image" name="logo_image" accept="image/jpeg, image/png" required><br><br>
         
         <button type="button" onclick="uploadImages()">Upload and Process</button>
     </form>
@@ -33,7 +33,7 @@
             console.log("uplaidng image")
 
             // POST request to the FastAPI endpoint
-            fetch('http://127.0.0.1:8000/get_model_with_image/', {
+            fetch('http://127.0.0.1:8000/target-logo/', {
                 method: 'POST',
                 body: formData
             })

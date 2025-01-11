@@ -11,14 +11,14 @@ client_id = str(uuid.uuid4())
 
 # uses the flux-redux-cloth-swap workflow to inpaint image uploaded (changed to base 64) to target image (either model or shirt)
 def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, mask_image_base64):
-    TARGETIMAGEID = "412"
-    INPAINTIMAGEID = "410"
-    MASKIMAGEID = "393"
+    TARGETIMAGEID = "405"
+    INPAINTIMAGEID = "404"
+    MASKIMAGEID = "403"
 
     file_path = "data.json"
 
     workflow_folder = "workflows-api"
-    file_name = "flux-redux-cloth-swap.json"
+    file_name = "flux-redux-logo-final-mango-api.json"
 
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
@@ -98,10 +98,10 @@ def swap_clothes_on_model(cloth_base_64, model_base_64, mask_base_64):
     ws.close()
     return images
 
-def get_cloth_with_logo(cloth_base64, logo_image_base64, mask_image_base64):
+def get_target_image_with_logo(target_image_base64, logo_image_base64, mask_image_base64):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
-    images = get_images(ws, get_inpaint_image_on_target_json(inpaint_image_base64=logo_image_base64, target_image_base64=cloth_base64, mask_image_base64=mask_image_base64))
+    images = get_images(ws, get_inpaint_image_on_target_json(inpaint_image_base64=logo_image_base64, target_image_base64=target_image_base64, mask_image_base64=mask_image_base64))
 
     print(images)
     ws.close()
