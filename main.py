@@ -42,12 +42,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/get-image")
-async def get_image(input: str = Query(None)):
-    image = comfyuiservice.fetch_image_from_comfy(input)
-    image_stream = io.BytesIO(image)
-    return StreamingResponse(image_stream, media_type="image/png")
-
 
 @app.get("/image-prompt/")
 async def get_image_with_prompt(
@@ -61,11 +55,30 @@ async def get_image_with_prompt(
     image_stream = io.BytesIO(image)
     return StreamingResponse(image_stream, media_type="image/png")
 
+
+@app.post("/swap-cloth-model")
+async def swap_cloth_on_model(
+    mask_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
+    cloth_image: UploadFile = File(..., description="Cloth image (JPG or PNG)"),
+    model_image: UploadFile = File(..., description="Model person image (JPG or PNG)"),
+):
+    """
+    Endpoint to process three images and return modified images as raw data.
+    """
+    # Load images into memory
+    mask_image_base64 = await convert_image_to_base64(mask_image)
+    cloth_image_base64 = await convert_image_to_base64(cloth_image)
+    model_image_base64 = await convert_image_to_base64(model_image)
+
+    result_image = comfyuiservice.get_model_image_with_cloth(cloth_base_64=cloth_image_base64, model_base_64=model_image_base64, mask_base_64=mask_image_base64)
+    image_stream = io.BytesIO(result_image)
+    return StreamingResponse(image_stream, media_type="image/png")
+
 @app.post("/target-logo")
 async def get_target_image_with_logo(
     mask_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
-    logo_image: UploadFile = File(..., description="Cloth image (JPG or PNG)"),
-    target_image: UploadFile = File(..., description="Logo image (JPG or PNG)"),
+    logo_image: UploadFile = File(..., description="Logo image (JPG or PNG)"),
+    target_image: UploadFile = File(..., description="Target output image (JPG or PNG)"),
 ):
     """
     Endpoint to process three images and return modified images as raw data.

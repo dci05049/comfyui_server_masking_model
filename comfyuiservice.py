@@ -9,7 +9,7 @@ save_image_websocket = 'SaveImageWebsocket'
 server_address = "127.0.0.1:8188"
 client_id = str(uuid.uuid4())
 
-# uses the flux-redux-cloth-swap workflow to inpaint image uploaded (changed to base 64) to target image (either model or shirt)
+# for inpainting logo on target image
 def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, mask_image_base64):
     TARGETIMAGEID = "405"
     INPAINTIMAGEID = "404"
@@ -30,6 +30,24 @@ def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, 
         prompt_json[TARGETIMAGEID]["inputs"]["image"] = target_image_base64
         prompt_json[INPAINTIMAGEID]["inputs"]["image"] = inpaint_image_base64
         prompt_json[MASKIMAGEID]["inputs"]["mask"] = mask_image_base64
+        return prompt_json
+    
+# swap cloth on model image with mask
+def swap_cloth_model_iamge_json(model_image_base_64, cloth_image_base_64, mask_image_base_64):
+    CLOTHIMAGEID = "410"
+    MODELIMAGEID = "412"
+    MASKIMAGEID = "393"
+    file_path = "data.json"
+    workflow_folder = "workflows-api"
+    file_name = "flux-redux-cloth-swap-api.json"
+    # Construct the full path to the JSON file
+    file_path = os.path.join(workflow_folder, file_name)
+    # Open the JSON file and load its content into a variable
+    with open(file_path, "r") as file:
+        prompt_json = json.load(file)
+        prompt_json[CLOTHIMAGEID]["inputs"]["image"] = cloth_image_base_64
+        prompt_json[MODELIMAGEID]["inputs"]["image"] = model_image_base_64
+        prompt_json[MASKIMAGEID]["inputs"]["mask"] = mask_image_base_64
         return prompt_json
 
 
@@ -89,10 +107,10 @@ def fetch_image_from_comfy(input):
     ws.close()
     return images
 
-def swap_clothes_on_model(cloth_base_64, model_base_64, mask_base_64):
+def get_model_image_with_cloth(cloth_base_64, model_base_64, mask_base_64):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
-    images = get_images(ws, get_inpaint_image_on_target_json(inpaint_image_base64=cloth_base_64, target_image_base64=model_base_64, mask_image_base64=mask_base_64))
+    images = get_images(ws, swap_cloth_model_iamge_json(cloth_image_base_64=cloth_base_64, model_image_base_64=model_base_64, mask_image_base_64=mask_base_64))
 
     print(images)
     ws.close()
