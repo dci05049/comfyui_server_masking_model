@@ -50,6 +50,22 @@ def swap_cloth_model_iamge_json(model_image_base_64, cloth_image_base_64, mask_i
         prompt_json[MASKIMAGEID]["inputs"]["mask"] = mask_image_base_64
         return prompt_json
 
+# flux pulid
+def flux_pulid_json(reference_image_base64, prompt):
+    REFERENCEIMAGEID = "66"
+    PROMPTID = "6"
+
+    file_path = "data.json"
+    workflow_folder = "workflows-api"
+    file_name = "flux-pulid-api.json"
+    # Construct the full path to the JSON file
+    file_path = os.path.join(workflow_folder, file_name)
+    # Open the JSON file and load its content into a variable
+    with open(file_path, "r") as file:
+        prompt_json = json.load(file)
+        prompt_json[REFERENCEIMAGEID]["inputs"]["image"] = reference_image_base64
+        prompt_json[PROMPTID]["inputs"]["text"] = prompt
+        return prompt_json
 
 # uses the flux-guff-text-api.json workflow to generate image with prompt
 def get_cloth_with_prompt(prompt):
@@ -100,13 +116,15 @@ def get_images(ws, prompt):
 
     return output_image
 
-def fetch_image_from_comfy(input):
+# Gets the new image with prompt
+def fetch_image_with_prompt(input):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, get_cloth_with_prompt(input))
     ws.close()
     return images
 
+# Gets the new image with model with new clothes
 def get_model_image_with_cloth(cloth_base_64, model_base_64, mask_base_64):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
@@ -116,6 +134,16 @@ def get_model_image_with_cloth(cloth_base_64, model_base_64, mask_base_64):
     ws.close()
     return images
 
+# Gets new image with prompt and reference image using Pulid
+def get_image_with_reference_pulid(reference_image_base64, prompt):
+    ws = websocket.WebSocket()
+    ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
+    images = get_images(ws, flux_pulid_json(reference_image_base64=reference_image_base64, prompt=prompt))
+
+    ws.close()
+    return images
+
+# Gets new image with logo printed on clothes
 def get_target_image_with_logo(target_image_base64, logo_image_base64, mask_image_base64):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))

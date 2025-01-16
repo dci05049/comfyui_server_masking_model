@@ -51,7 +51,7 @@ async def get_image_with_prompt(
     Endpoint to process three images and return modified images as raw data.
     """
     # Load images into memory
-    image = comfyuiservice.fetch_image_from_comfy(input)
+    image = comfyuiservice.fetch_image_with_prompt(input)
     image_stream = io.BytesIO(image)
     return StreamingResponse(image_stream, media_type="image/png")
 
@@ -89,6 +89,23 @@ async def get_target_image_with_logo(
     logo_image_base64 = await convert_image_to_base64(logo_image)
 
     result_image = comfyuiservice.get_target_image_with_logo(target_image_base64=target_image_base64, logo_image_base64=logo_image_base64, mask_image_base64=mask_image_base64)
+    image_stream = io.BytesIO(result_image)
+    return StreamingResponse(image_stream, media_type="image/png")
+
+@app.post("/swap-face-image")
+async def swap_face_and_create_new_image(
+    reference_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
+    user_prompt: str = Form(...),
+):
+    """
+    Endpoint to process three images and return modified images as raw data.
+    """
+    # Load images into memory
+    reference_image_base64 = await convert_image_to_base64(reference_image)
+    print(user_prompt)
+    # print(reference_image_base64)
+
+    result_image = comfyuiservice.get_image_with_reference_pulid(reference_image_base64=reference_image_base64, prompt=user_prompt)
     image_stream = io.BytesIO(result_image)
     return StreamingResponse(image_stream, media_type="image/png")
 
