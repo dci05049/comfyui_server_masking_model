@@ -18,11 +18,12 @@ def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, 
     file_path = "data.json"
 
     workflow_folder = "workflows-api"
-    file_name = "flux-redux-logo-final-mango-api.json"
+    file_name = "flux-redux-logo-final-mango-guff-api.json"
+
+    print('aaaa')
 
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
-    print(f"file path: {file_path}")
 
     # Open the JSON file and load its content into a variable
     with open(file_path, "r", encoding="utf8") as file:
@@ -39,7 +40,7 @@ def swap_cloth_model_iamge_json(model_image_base_64, cloth_image_base_64, mask_i
     MASKIMAGEID = "393"
     file_path = "data.json"
     workflow_folder = "workflows-api"
-    file_name = "flux-redux-cloth-swap-api.json"
+    file_name = "flux-redux-cloth-swap-api-guff-api.json"
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
     # Open the JSON file and load its content into a variable
@@ -130,7 +131,6 @@ def get_model_image_with_cloth(cloth_base_64, model_base_64, mask_base_64):
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, swap_cloth_model_iamge_json(cloth_image_base_64=cloth_base_64, model_image_base_64=model_base_64, mask_image_base_64=mask_base_64))
 
-    print(images)
     ws.close()
     return images
 
@@ -149,6 +149,5 @@ def get_target_image_with_logo(target_image_base64, logo_image_base64, mask_imag
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, get_inpaint_image_on_target_json(inpaint_image_base64=logo_image_base64, target_image_base64=target_image_base64, mask_image_base64=mask_image_base64))
 
-    print(images)
     ws.close()
     return images
