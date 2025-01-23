@@ -109,6 +109,24 @@ async def swap_face_and_create_new_image(
     image_stream = io.BytesIO(result_image)
     return StreamingResponse(image_stream, media_type="image/png")
 
+@app.post("/outpaint-sdxl")
+async def outpaint_sdxl(
+    reference_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
+    left: int = Form(...),
+    right: int = Form(...),
+    top: int = Form(...),
+    bottom: int = Form(...),
+):
+    """
+    Endpoint to process three images and return modified images as raw data.
+    """
+
+    # Load images into memory
+    reference_image_base64 = await convert_image_to_base64(reference_image)
+    result_image = comfyuiservice.get_image_with_outpainting_sdxl(reference_image_base64=reference_image_base64, left=left, right=right, top=top, bottom=bottom)
+    image_stream = io.BytesIO(result_image)
+    return StreamingResponse(image_stream, media_type="image/png")
+
 @app.get("/hello")
 def read_hello():
     return {"message": "Hello World!"}

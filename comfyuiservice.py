@@ -4,6 +4,9 @@ import json
 import os
 import urllib.request
 import urllib.parse
+import base64
+from io import BytesIO
+from PIL import Image
 
 save_image_websocket = 'SaveImageWebsocket'
 server_address = "127.0.0.1:8188"
@@ -14,8 +17,6 @@ def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, 
     TARGETIMAGEID = "405"
     INPAINTIMAGEID = "404"
     MASKIMAGEID = "403"
-
-    file_path = "data.json"
 
     workflow_folder = "workflows-api"
     file_name = "flux-redux-logo-final-mango-guff-api.json"
@@ -38,7 +39,7 @@ def swap_cloth_model_iamge_json(model_image_base_64, cloth_image_base_64, mask_i
     CLOTHIMAGEID = "410"
     MODELIMAGEID = "412"
     MASKIMAGEID = "393"
-    file_path = "data.json"
+
     workflow_folder = "workflows-api"
     file_name = "flux-redux-cloth-swap-api-guff-api.json"
     # Construct the full path to the JSON file
@@ -56,7 +57,6 @@ def flux_pulid_json(reference_image_base64, prompt):
     REFERENCEIMAGEID = "66"
     PROMPTID = "6"
 
-    file_path = "data.json"
     workflow_folder = "workflows-api"
     file_name = "flux-pulid-api.json"
     # Construct the full path to the JSON file
@@ -66,6 +66,37 @@ def flux_pulid_json(reference_image_base64, prompt):
         prompt_json = json.load(file)
         prompt_json[REFERENCEIMAGEID]["inputs"]["image"] = reference_image_base64
         prompt_json[PROMPTID]["inputs"]["text"] = prompt
+        return prompt_json
+    
+# outpainting sdxl
+def outpainting_sdxl_json(reference_image_base64, left, right, top, bottom):
+    REFERENCEIMAGEID = "361"
+    NEWIMAGESIZENODEID = "340"
+
+    image_data = base64.b64decode(reference_image_base64)
+    
+    # Open the image using Pillow
+    image = Image.open(BytesIO(image_data))
+    
+    # Get width and height
+    width, height = image.size
+
+    print(width, height)
+
+
+    new_width = width + left + right
+    new_height = height + top + bottom
+
+    workflow_folder = "workflows-api"
+    file_name = "sdxl-outpainting-api.json"
+    # Construct the full path to the JSON file
+    file_path = os.path.join(workflow_folder, file_name)
+    # Open the JSON file and load its content into a variable
+    with open(file_path, "r", encoding="utf8") as file:
+        prompt_json = json.load(file)
+        prompt_json[REFERENCEIMAGEID]["inputs"]["image"] = reference_image_base64
+        prompt_json[NEWIMAGESIZENODEID]["inputs"]["width"] = new_width
+        prompt_json[NEWIMAGESIZENODEID]["inputs"]["height"] = new_height
         return prompt_json
 
 # uses the flux-guff-text-api.json workflow to generate image with prompt
@@ -139,6 +170,15 @@ def get_image_with_reference_pulid(reference_image_base64, prompt):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, flux_pulid_json(reference_image_base64=reference_image_base64, prompt=prompt))
+
+    ws.close()
+    return images
+
+# Gets outpainting image with increaes in each sides 
+def get_image_with_outpainting_sdxl(reference_image_base64, left, right, top, bottom):
+    ws = websocket.WebSocket()
+    ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
+    images = get_images(ws, outpainting_sdxl_json(reference_image_base64=reference_image_base64, left=left, right=right, top=top, bottom=bottom))
 
     ws.close()
     return images
