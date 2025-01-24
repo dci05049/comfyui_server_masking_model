@@ -72,6 +72,7 @@ def flux_pulid_json(reference_image_base64, prompt):
 def outpainting_sdxl_json(reference_image_base64, left, right, top, bottom):
     REFERENCEIMAGEID = "361"
     NEWIMAGESIZENODEID = "340"
+    IMAGEBLENDADVANCENODEID = "355"
 
     image_data = base64.b64decode(reference_image_base64)
     
@@ -81,11 +82,16 @@ def outpainting_sdxl_json(reference_image_base64, left, right, top, bottom):
     # Get width and height
     width, height = image.size
 
-    print(width, height)
+    # calculate x and y pivot
 
 
     new_width = width + left + right
     new_height = height + top + bottom
+    center_point = width / 2
+
+
+    x_percent = (center_point + left) / new_width * 100
+    y_percent = (center_point + top) / new_height  * 100
 
     workflow_folder = "workflows-api"
     file_name = "sdxl-outpainting-api.json"
@@ -97,6 +103,8 @@ def outpainting_sdxl_json(reference_image_base64, left, right, top, bottom):
         prompt_json[REFERENCEIMAGEID]["inputs"]["image"] = reference_image_base64
         prompt_json[NEWIMAGESIZENODEID]["inputs"]["width"] = new_width
         prompt_json[NEWIMAGESIZENODEID]["inputs"]["height"] = new_height
+        prompt_json[IMAGEBLENDADVANCENODEID]["inputs"]["x_percent"] = x_percent
+        prompt_json[IMAGEBLENDADVANCENODEID]["inputs"]["y_percent"] = y_percent
         return prompt_json
 
 # uses the flux-guff-text-api.json workflow to generate image with prompt
