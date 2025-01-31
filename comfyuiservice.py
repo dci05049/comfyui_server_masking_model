@@ -87,11 +87,12 @@ def outpainting_sdxl_json(reference_image_base64, left, right, top, bottom):
 
     new_width = width + left + right
     new_height = height + top + bottom
-    center_point = width / 2
+    center_point_width = width / 2
+    center_point_height = height / 2
 
 
-    x_percent = (center_point + left) / new_width * 100
-    y_percent = (center_point + top) / new_height  * 100
+    x_percent = (center_point_width + left) / new_width * 100
+    y_percent = (center_point_height + top) / new_height  * 100
 
     workflow_folder = "workflows-api"
     file_name = "sdxl-outpainting-api.json"
