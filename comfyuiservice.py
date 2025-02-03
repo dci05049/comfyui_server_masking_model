@@ -12,6 +12,31 @@ save_image_websocket = 'SaveImageWebsocket'
 server_address = "127.0.0.1:8188"
 client_id = str(uuid.uuid4())
 
+# for magic eranser
+def get_magic_eraser_json(image_base64, mask_image_base64):
+    IMAGEID = "85"
+    MASKID = "99"
+
+    workflow_folder = "workflows-api"
+    file_name = "magic-eraser-api.json"
+
+
+    # with open("image.txt", "w") as file:
+    #     file.write(str(image_base64))  # Convert result to string if it's not already
+
+    # with open("mask.txt", "w") as file:
+    #     file.write(str(mask_image_base64))  # Convert result to string if it's not already
+
+    # Construct the full path to the JSON file
+    file_path = os.path.join(workflow_folder, file_name)
+
+    # Open the JSON file and load its content into a variable
+    with open(file_path, "r", encoding="utf8") as file:
+        prompt_json = json.load(file)
+        prompt_json[IMAGEID]["inputs"]["image"] = image_base64
+        prompt_json[MASKID]["inputs"]["mask"] = mask_image_base64
+        return prompt_json
+
 # for inpainting logo on target image
 def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, mask_image_base64):
     TARGETIMAGEID = "405"
@@ -20,8 +45,6 @@ def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, 
 
     workflow_folder = "workflows-api"
     file_name = "flux-redux-logo-final-mango-guff-api.json"
-
-    print('aaaa')
 
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
@@ -188,6 +211,15 @@ def get_image_with_outpainting_sdxl(reference_image_base64, left, right, top, bo
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, outpainting_sdxl_json(reference_image_base64=reference_image_base64, left=left, right=right, top=top, bottom=bottom))
+
+    ws.close()
+    return images
+
+# Gets new image with object removed, input target image and mask where mask area is where object is removed
+def get_magic_eraser_image(image_base64, mask_image_base64):
+    ws = websocket.WebSocket()
+    ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
+    images = get_images(ws, get_magic_eraser_json(image_base64=image_base64, mask_image_base64=mask_image_base64))
 
     ws.close()
     return images

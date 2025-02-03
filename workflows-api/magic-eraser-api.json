@@ -1,0 +1,225 @@
+{
+  "4": {
+    "inputs": {
+      "ckpt_name": "juggernautXL_juggXIByRundiffusion.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "27": {
+    "inputs": {
+      "image": [
+        "43",
+        0
+      ],
+      "mask": [
+        "29",
+        0
+      ]
+    },
+    "class_type": "LaMaInpainting",
+    "_meta": {
+      "title": "LaMaInpainting ♾️Mixlab"
+    }
+  },
+  "29": {
+    "inputs": {
+      "dilation": 10,
+      "mask": [
+        "46",
+        0
+      ]
+    },
+    "class_type": "ImpactDilateMask",
+    "_meta": {
+      "title": "Dilate Mask"
+    }
+  },
+  "37": {
+    "inputs": {
+      "expand": 8,
+      "tapered_corners": true,
+      "mask": [
+        "46",
+        0
+      ]
+    },
+    "class_type": "GrowMask",
+    "_meta": {
+      "title": "GrowMask"
+    }
+  },
+  "43": {
+    "inputs": {
+      "max_width": 1024,
+      "max_height": 1024,
+      "min_width": 0,
+      "min_height": 0,
+      "crop_if_required": "no",
+      "images": [
+        "85",
+        0
+      ]
+    },
+    "class_type": "ConstrainImage|pysssss",
+    "_meta": {
+      "title": "Constrain Image 🐍"
+    }
+  },
+  "44": {
+    "inputs": {
+      "mask": [
+        "99",
+        0
+      ]
+    },
+    "class_type": "MaskToImage",
+    "_meta": {
+      "title": "Convert Mask to Image"
+    }
+  },
+  "45": {
+    "inputs": {
+      "max_width": 1024,
+      "max_height": 1024,
+      "min_width": 0,
+      "min_height": 0,
+      "crop_if_required": "no",
+      "images": [
+        "44",
+        0
+      ]
+    },
+    "class_type": "ConstrainImage|pysssss",
+    "_meta": {
+      "title": "Constrain Image 🐍"
+    }
+  },
+  "46": {
+    "inputs": {
+      "channel": "red",
+      "image": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "ImageToMask",
+    "_meta": {
+      "title": "Convert Image to Mask"
+    }
+  },
+  "66": {
+    "inputs": {
+      "images": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "73": {
+    "inputs": {
+      "MODEL": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "Anything Everywhere",
+    "_meta": {
+      "title": "Anything Everywhere"
+    }
+  },
+  "74": {
+    "inputs": {
+      "CLIP": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "Anything Everywhere",
+    "_meta": {
+      "title": "Anything Everywhere"
+    }
+  },
+  "75": {
+    "inputs": {
+      "VAE": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "Anything Everywhere",
+    "_meta": {
+      "title": "Anything Everywhere"
+    }
+  },
+  "85": {
+    "inputs": {
+      "image": ""
+    },
+    "class_type": "ETN_LoadImageBase64",
+    "_meta": {
+      "title": "Load Image (Base64)"
+    }
+  },
+  "94": {
+    "inputs": {
+      "image": "iVBORw0KGgoAAAANSUhEUgAAAn8AAANYAQMAAACPXhmCAAAABlBMVEUAAAD///+l2Z/dAAADQ0lEQVR4nO3cMXLbMBBGYXtUqMQReBQcDbxBrsSj4AgsXWTCRFYkUeSiyO4fGbLeV7h8YxtLkNSIfHsDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACv47AsozRYluWnsndc/piEwXIKCn/F9+WTLpjOwSoL5nPwQxY895Zfqt7hb1A2iukSrKLgcAnOomC5BFWTeOmpVuW6JqpVOd6CkySYbsEqCeZbUHOslFtQs8y3nmaZ31dByQ52WAdHQfC4Dk6CYFoHqyA4rIOzIJjXQcUgyoNlHVRM9rqnmOy7uVZMtjx4uA+O4WC6D07h4KAOlvtgjfaO9734sVfEwc3QxI+9pA7mbTB6MG970eBhFwzuDrt/YTQ47ILB3WE7heHgvhcL7tckuH9tD+RwcL/Iwf0rq4PGIseCRi8U3O1dJzUQtKYmFLSmJhS0piYUHKzgHAjm7oNFHbR6kaA515HzqDxoHiiRoHmgdBVM6uBgBgPXIvJgNoOBaxF5sDwmGLgWsXv64Ojt2XvDtw7au1fgWkQetHevZwjWboKJ4MXsDQ4E+wtmggQJEvyXYP2+wdJ9sNHzX329XrB1E+C+C3jBYOs2xX03+rCg+46+/2Drvsf9uc3Dgu4/OT0q6J5DeXBoBcdegrkVnLoP1l6C5WHBufug95PxVu8Vg94tWx1sXok8QdB5UiH4P4PO8yhBggS/JNg+pxD8umB53qD3Zk8ezASvvBecQ/fB9LCg9y5AHmx9btNPsPn54dxLsHkerb0EmycVeXDyBos6mBvBsZvg0Ah6e83dQR30f3eusTv4g42D2f+Fxsax5/8OpzzYOPZmf7CYweoPZnVwMIOTP5jM4OgP2pPt7zUmOxA0BzH00JAVDD0nVYxg6NGwbARndbBGgoMRnCLBZATHSNCa7EjPmuzY03XGZAcfKBRPjTXZUyyYtYtszE308eXd3ESfydzNzRwM7pZ5iga3yxztbbeH+DPqm2Wu4eB1VX4opvDkOn+nn8L3Bnx8/vGjIJiu/7yieZGK/N078rcD6d9fJH/Dkv4dUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMvwGRV+oA33iVHwAAAABJRU5ErkJggg=="
+    },
+    "class_type": "ETN_LoadImageBase64",
+    "_meta": {
+      "title": "Load Image (Base64)"
+    }
+  },
+  "97": {
+    "inputs": {
+      "channel": "red",
+      "image": [
+        "94",
+        0
+      ]
+    },
+    "class_type": "ImageToMask",
+    "_meta": {
+      "title": "Convert Image to Mask"
+    }
+  },
+  "98": {
+    "inputs": {
+      "mask": [
+        "97",
+        0
+      ]
+    },
+    "class_type": "PreviewMask_",
+    "_meta": {
+      "title": "Preview Mask ♾️Mixlab"
+    }
+  },
+  "99": {
+    "inputs": {
+      "mask": ""
+    },
+    "class_type": "ETN_LoadMaskBase64",
+    "_meta": {
+      "title": "Load Mask (Base64)"
+    }
+  },
+  "100": {
+    "inputs": {
+      "images": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  }
+}

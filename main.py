@@ -127,6 +127,23 @@ async def outpaint_sdxl(
     image_stream = io.BytesIO(result_image)
     return StreamingResponse(image_stream, media_type="image/png")
 
+@app.post("/magic-eraser")
+async def magic_eraser(
+    target_image: UploadFile = File(..., description="Target image (JPG or PNG)"),
+    mask_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
+):
+    """
+    Endpoint to process three images and return modified images as raw data.
+    """
+
+    # Load images into memory
+    mask_image_base64 = await convert_image_to_base64(mask_image)
+    target_image_base64 = await convert_image_to_base64(target_image)
+    
+    result_image = comfyuiservice.get_magic_eraser_image(image_base64=target_image_base64, mask_image_base64=mask_image_base64)
+    image_stream = io.BytesIO(result_image)
+    return StreamingResponse(image_stream, media_type="image/png")
+
 @app.get("/hello")
 def read_hello():
     return {"message": "Hello World!"}
