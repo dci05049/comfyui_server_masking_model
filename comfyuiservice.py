@@ -21,11 +21,11 @@ def get_magic_eraser_json(image_base64, mask_image_base64):
     file_name = "magic-eraser-api.json"
 
 
-    # with open("image.txt", "w") as file:
-    #     file.write(str(image_base64))  # Convert result to string if it's not already
+    with open("image.txt", "w") as file:
+        file.write(str(image_base64))  # Convert result to string if it's not already
 
-    # with open("mask.txt", "w") as file:
-    #     file.write(str(mask_image_base64))  # Convert result to string if it's not already
+    with open("mask.txt", "w") as file:
+        file.write(str(mask_image_base64))  # Convert result to string if it's not already
 
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
@@ -35,6 +35,25 @@ def get_magic_eraser_json(image_base64, mask_image_base64):
         prompt_json = json.load(file)
         prompt_json[IMAGEID]["inputs"]["image"] = image_base64
         prompt_json[MASKID]["inputs"]["mask"] = mask_image_base64
+        return prompt_json
+    
+
+# for magic eranser
+def get_sdxl_pulid_sticker_json(reference_image_base64, prompt):
+    REFERENCEIMAGEID = "528"
+    PROMPTID = "313"
+
+    workflow_folder = "workflows-api"
+    file_name = "sdxl-pulid-sticker-api.json"
+
+    # Construct the full path to the JSON file
+    file_path = os.path.join(workflow_folder, file_name)
+
+    # Open the JSON file and load its content into a variable
+    with open(file_path, "r", encoding="utf8") as file:
+        prompt_json = json.load(file)
+        prompt_json[REFERENCEIMAGEID]["inputs"]["image"] = reference_image_base64
+        prompt_json[PROMPTID]["inputs"]["prompt_1"] = prompt
         return prompt_json
 
 # for inpainting logo on target image
@@ -110,6 +129,9 @@ def outpainting_sdxl_json(reference_image_base64, left, right, top, bottom):
 
     new_width = width + left + right
     new_height = height + top + bottom
+
+    print (new_width)
+    print (new_height)
     center_point_width = width / 2
     center_point_height = height / 2
 
@@ -202,6 +224,15 @@ def get_image_with_reference_pulid(reference_image_base64, prompt):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, flux_pulid_json(reference_image_base64=reference_image_base64, prompt=prompt))
+
+    ws.close()
+    return images
+
+# Gets new image with prompt and reference image using Pulid
+def get_sticker_with_reference_sdxl_pulid(reference_image_base64, prompt):
+    ws = websocket.WebSocket()
+    ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
+    images = get_images(ws, get_sdxl_pulid_sticker_json(reference_image_base64=reference_image_base64, prompt=prompt))
 
     ws.close()
     return images

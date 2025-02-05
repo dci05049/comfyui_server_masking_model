@@ -102,7 +102,6 @@ async def swap_face_and_create_new_image(
     """
     # Load images into memory
     reference_image_base64 = await convert_image_to_base64(reference_image)
-    print(user_prompt)
     # print(reference_image_base64)
 
     result_image = comfyuiservice.get_image_with_reference_pulid(reference_image_base64=reference_image_base64, prompt=user_prompt)
@@ -141,6 +140,22 @@ async def magic_eraser(
     target_image_base64 = await convert_image_to_base64(target_image)
     
     result_image = comfyuiservice.get_magic_eraser_image(image_base64=target_image_base64, mask_image_base64=mask_image_base64)
+    image_stream = io.BytesIO(result_image)
+    return StreamingResponse(image_stream, media_type="image/png")
+
+@app.post("/sdxl-pulid-sticker")
+async def sdxl_pulid_sticker(
+    reference_image: UploadFile = File(..., description="Mask image (JPG or PNG)"),
+    user_prompt: str = Form(...),
+):
+    """
+    Endpoint to process three images and return modified images as raw data.
+    """
+
+    # Load images into memory
+    reference_image_base64 = await convert_image_to_base64(reference_image)
+    
+    result_image = comfyuiservice.get_sticker_with_reference_sdxl_pulid(reference_image_base64=reference_image_base64, prompt=user_prompt)
     image_stream = io.BytesIO(result_image)
     return StreamingResponse(image_stream, media_type="image/png")
 
