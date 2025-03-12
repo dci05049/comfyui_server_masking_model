@@ -59,20 +59,22 @@ def get_sdxl_pulid_sticker_json(reference_image_base64, prompt):
 # for inpainting logo on target image
 def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, mask_image_base64):
     TARGETIMAGEID = "405"
-    INPAINTIMAGEID = "404"
+    LOGOIMAGEID = "404"
     MASKIMAGEID = "403"
 
     workflow_folder = "workflows-api"
-    file_name = "flux-redux-logo-final-mango-guff-api.json"
+    file_name = "flux-redux-logo-final-mango.json"
 
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
 
-    # Open the JSON file and load its content into a variable
+    print(mask_image_base64)
+
+
     with open(file_path, "r", encoding="utf8") as file:
         prompt_json = json.load(file)
         prompt_json[TARGETIMAGEID]["inputs"]["image"] = target_image_base64
-        prompt_json[INPAINTIMAGEID]["inputs"]["image"] = inpaint_image_base64
+        prompt_json[LOGOIMAGEID]["inputs"]["image"] = inpaint_image_base64
         prompt_json[MASKIMAGEID]["inputs"]["mask"] = mask_image_base64
         return prompt_json
     
@@ -130,8 +132,7 @@ def outpainting_sdxl_json(reference_image_base64, left, right, top, bottom):
     new_width = width + left + right
     new_height = height + top + bottom
 
-    print (new_width)
-    print (new_height)
+
     center_point_width = width / 2
     center_point_height = height / 2
 
@@ -257,6 +258,7 @@ def get_magic_eraser_image(image_base64, mask_image_base64):
 
 # Gets new image with logo printed on clothes
 def get_target_image_with_logo(target_image_base64, logo_image_base64, mask_image_base64):
+    print("logo imageadfadsfas")
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, get_inpaint_image_on_target_json(inpaint_image_base64=logo_image_base64, target_image_base64=target_image_base64, mask_image_base64=mask_image_base64))
