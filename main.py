@@ -7,6 +7,7 @@ from io import BytesIO
 import base64
 import io
 import comfyuiservice
+import zipfile
 
 app = FastAPI()
 
@@ -54,6 +55,23 @@ async def get_image_with_prompt(
     image = comfyuiservice.fetch_image_with_prompt(input)
     image_stream = io.BytesIO(image)
     return StreamingResponse(image_stream, media_type="image/png")
+
+@app.get("/image-prompt-batch/")
+async def get_image_with_prompt_batch(
+    input: str = Query(None)
+):
+    """
+    Endpoint to process three images and return modified images as raw data.
+    """
+            
+    # Load images into memory
+    images = comfyuiservice.fetch_image_with_prompt_batch(input)
+
+    encoded_images = [base64.b64encode(image).decode("utf-8") for image in images]
+
+    print(encoded_images)
+
+    return {"images": encoded_images}
 
 
 @app.post("/swap-cloth-model")

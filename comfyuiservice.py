@@ -68,8 +68,6 @@ def get_inpaint_image_on_target_json(inpaint_image_base64, target_image_base64, 
     # Construct the full path to the JSON file
     file_path = os.path.join(workflow_folder, file_name)
 
-    print(mask_image_base64)
-
 
     with open(file_path, "r", encoding="utf8") as file:
         prompt_json = json.load(file)
@@ -171,6 +169,24 @@ def get_cloth_with_prompt(prompt):
         prompt_json = json.load(file)
         prompt_json[TEXTID]["inputs"]["text"] = prompt
         return prompt_json
+    
+# uses the flux tea cache workflow to send images in batch of 2
+def get_image_with_prompt_flux_batch(prompt):
+    TEXTID = "6"
+
+    file_path = "data.json"
+
+    workflow_folder = "workflows-api"
+    file_name = "flux_image_generation_batch_2.json"
+
+    # Construct the full path to the JSON file
+    file_path = os.path.join(workflow_folder, file_name)
+
+    # Open the JSON file and load its content into a variable
+    with open(file_path, "r") as file:
+        prompt_json = json.load(file)
+        prompt_json[TEXTID]["inputs"]["text"] = prompt
+        return prompt_json
 
 
 def queue_prompt(prompt):
@@ -203,11 +219,45 @@ def get_images(ws, prompt):
 
     return output_image
 
+
+def get_images_list(ws, prompt):
+    prompt_id = queue_prompt(prompt)['prompt_id']
+    output_images = {}
+    current_node = ""
+    while True:
+        out = ws.recv()
+        if isinstance(out, str):
+            message = json.loads(out)
+            if message['type'] == 'executing':
+                data = message['data']
+                if data['prompt_id'] == prompt_id:
+                    if data['node'] is None:
+                        break #Execution is done
+                    else:
+                        node_number = data['node']
+                        current_node = prompt[node_number]["class_type"]
+        else:
+            if current_node == save_image_websocket:
+
+                images_output = output_images.get(current_node, [])
+                images_output.append(out[8:])
+                output_images[current_node] = images_output
+
+    return output_images[save_image_websocket]
+
 # Gets the new image with prompt
 def fetch_image_with_prompt(input):
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
     images = get_images(ws, get_cloth_with_prompt(input))
+    ws.close()
+    return images
+
+# Gets the new image with prompt
+def fetch_image_with_prompt_batch(input):
+    ws = websocket.WebSocket()
+    ws.connect("ws://{}/ws?clientId={}".format(server_address, client_id))
+    images = get_images_list(ws, get_image_with_prompt_flux_batch(input))
     ws.close()
     return images
 

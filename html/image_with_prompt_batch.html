@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Image</title>
+</head>
+<body>
+    <h1>Display Image from Comfy UI Server</h1>
+    
+    <!-- Input field to get user input -->
+    <input type="text" id="user-input" placeholder="Enter text for image" />
+    <button onclick="fetchImage()">Load Image</button>
+    
+    <!-- Container for displaying the image -->
+    <div id="image-container"></div>
+
+    <script>
+        function fetchImage() {
+            // Get the value from the input field
+            const inputValue = document.getElementById('user-input').value;
+
+            // Fetch the image with the input as a query parameter
+            fetch(`http://127.0.0.1:8000/image-prompt-batch?input=${encodeURIComponent(inputValue)}`)
+                .then(response => response.json())  // Expect JSON response
+                .then(data  => {
+                    console.log(data)
+                    const imageContainer = document.getElementById('image-container');
+                    imageContainer.innerHTML = ''; // Clear previous images
+
+                    data.images.forEach(base64Image => {
+                        console.log(base64Image)
+                        const img = document.createElement('img');
+                        img.src = `data:image/png;base64,${base64Image}`;
+                        img.alt = "Generated Image";
+                        img.style.width = "200px"; // Adjust size as needed
+                        img.style.margin = "10px"; 
+
+                        imageContainer.appendChild(img);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
